@@ -9,7 +9,7 @@ app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
 
 const CONNECTION_URL = "mongodb+srv://justinsian:Lp5GwtXfnXJRIz16@cluster0-jypkg.azure.mongodb.net/test?retryWrites=true&w=majority";
-const DATABASE_NAME = "sample_airbnb";
+const DATABASE_NAME = "budget_buddy_data";
 
 app.listen(3000, () => {
     const client = new MongoClient(CONNECTION_URL, { useNewUrlParser: true });
@@ -18,7 +18,17 @@ app.listen(3000, () => {
             throw error;
         }
         database = client.db(DATABASE_NAME);
-        collection = database.collection("listingsAndReviews");
+        collection = database.collection("users");
         console.log("Connected to `" + DATABASE_NAME + "`!");
     });
+
+    app.post("/user", (request, response) => {
+        collection.insertOne(request.body, (error, result) => {
+            if(error) {
+                return response.status(500).send(error);
+            }
+            response.send(result.result);
+        });
+    });
 });
+
